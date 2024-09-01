@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 
+import '../src/app/globals.css';
+
 const Header = () => {
   return (
     <header className="bg-gray-800 text-white">

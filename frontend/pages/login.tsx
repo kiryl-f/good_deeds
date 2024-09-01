@@ -2,10 +2,13 @@ import { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components'
 import Header from '../components/header';
-import TestComponent from '../components/test_component';
 import Signup from '../components/signup';
 
+
 import '../src/app/globals.css';
+
+
+import Footer from '../components/footer';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -29,8 +32,9 @@ export default function Login() {
 
   return (
     <div>
-      <Header></Header>
-      <Signup></Signup>
+      <Header/>
+      <Signup/>
+      <Footer/>
     </div>
   );
 }

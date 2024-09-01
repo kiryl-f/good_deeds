@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
 
+
+import '../src/app/globals.css';
+
 const Container = styled.div`
     min-height: 100vh;
     background-color: #f9fafb;
@@ -178,7 +181,7 @@ export default function Signup() {
                     <div>
                         <Label htmlFor="username">Username</Label>
                         <UsernameInputContainer>
-                            <UsernamePrefix>iworkedon.com/</UsernamePrefix>
+                            <UsernamePrefix>goodeeds.com/</UsernamePrefix>
                             <Input
                                 id="username"
                                 name="username"
