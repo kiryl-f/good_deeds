@@ -1,9 +1,10 @@
 
 'use client'
 
+import Head from "next/head";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
-import Signup from "../../components/signup_form";
+import Signup from "../../components/login_form";
 import "./globals.css";
 
 
@@ -11,6 +12,9 @@ import "./globals.css";
 export default function Home() {
   return (
     <main className="flex flex-col min-h-screen">
+      <Head>
+        <title>Good Deeds</title>
+      </Head>
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
