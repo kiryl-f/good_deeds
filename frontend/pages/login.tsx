@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components'
 import Header from '../components/header';
-import Signup from '../components/signup';
+import Signup from '../components/signup_form';
 
 
 import '../src/app/globals.css';
