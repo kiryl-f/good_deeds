@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3000"  # Expose the backend on port 3001 on the host machine
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: good_deeds
+      DATABASE_PASSWORD: good_deeds
+      DATABASE_NAME: good_deeds_db
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3002:3000"  # Expose the frontend on port 3002 on the host machine
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: good_deeds  # Must match DATABASE_USER
+      POSTGRES_PASSWORD: good_deeds  # Must match DATABASE_PASSWORD
+      POSTGRES_DB: good_deeds_db  # Must match DATABASE_NAME
+    ports:
+      - "5432:5432" 
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
