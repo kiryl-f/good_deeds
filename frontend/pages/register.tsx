@@ -13,7 +13,7 @@ export default function Register() {
         <title>Create account</title>
       </Head>
       <Header />
-      <div className="flex-grow flex flex-col justify-center bg-gradient-to-r from-darkBlue via-lightBeige to-lightGreen py-12 sm:px-6 lg:px-8">
+      <div className="flex-grow flex flex-col justify-center bg-gradient-to-l from-slate-50 to-cyan-600 py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md  mb-15" >
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Create a new account

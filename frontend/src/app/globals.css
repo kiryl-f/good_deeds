@@ -27,10 +27,13 @@ body {
     
     */
 
-    body {
-      @apply bg-gradient-to-r from-blue-500 to-green-500 min-h-screen;
-    }
+    @apply  bg-gradient-to-l from-slate-50 to-cyan-600;
 }
+
+html {
+  @apply text-white
+}
+
 
 @layer utilities {
   .text-balance {
