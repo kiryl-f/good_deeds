@@ -1,239 +1,133 @@
-import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
-
-
 import '../src/app/globals.css';
 
-const Container = styled.div`
-    min-height: 100vh;
-    background-color: #f9fafb;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 3rem 1.5rem;
-    @media (min-width: 640px) {
-        padding: 3rem;
-    }
-    @media (min-width: 1024px) {
-        padding: 3rem 2rem;
-    }
-`;
-
-const Header = styled.div`
-    margin: 0 auto;
-    width: 100%;
-    max-width: 28rem;
-    text-align: center;
-`;
-
-const Title = styled.h2`
-    margin-top: 1.5rem;
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-    font-weight: 800;
-    color: #1f2937;
-`;
-
-const Subtitle = styled.p`
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    color: #6b7280;
-    max-width: 100%;
-`;
-
-const StyledLink = styled(Link)`
-    margin-left: 0.25rem;
-    color: #3b82f6;
-    font-weight: 500;
-    &:hover {
-        color: #2563eb;
-        text-decoration: underline;
-    }
-    &:focus {
-        outline: none;
-        text-decoration: underline;
-    }
-`;
-
-const FormContainer = styled.div`
-    margin-top: 2rem;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 28rem;
-    background-color: #ffffff;
-    padding: 2rem 1rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    border-radius: 0.5rem;
-    @media (min-width: 640px) {
-        padding: 2rem;
-    }
-`;
-
-const Form = styled.form`
-    display: grid;
-    gap: 1.5rem;
-`;
-
-const Label = styled.label`
-    display: block;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    font-weight: 500;
-    color: #374151;
-`;
-
-const InputContainer = styled.div`
-    position: relative;
-    margin-top: 0.25rem;
-`;
-
-const Input = styled.input`
-    appearance: none;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    placeholder-color: #9ca3af;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    &:focus {
-        outline: none;
-        border-color: #93c5fd;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
-    }
-`;
-
-const UsernameInputContainer = styled.div`
-    display: flex;
-    align-items: center;
-    margin-top: 0.25rem;
-`;
-
-const UsernamePrefix = styled.span`
-    display: inline-flex;
-    height: 2.5rem;
-    align-items: center;
-    padding: 0 0.75rem;
-    border: 1px solid #d1d5db;
-    border-right: 0;
-    border-radius: 0.375rem 0 0 0.375rem;
-    background-color: #f9fafb;
-    color: #6b7280;
-    font-size: 0.875rem;
-`;
-
-const SubmitButton = styled.button`
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.375rem;
-    background-color: #3b82f6;
-    color: #ffffff;
-    font-size: 0.875rem;
-    font-weight: 500;
-    &:hover {
-        background-color: #2563eb;
-    }
-    &:focus {
-        outline: none;
-        background-color: #1e40af;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
-    }
-`;
-
 export default function Signup() {
-    return (
-        <Container>
-            <Header>
-                <Image
-                    className="mx-auto h-10 w-auto"
-                    src="https://www.svgrepo.com/show/301692/login.svg"
-                    alt="Workflow"
-                    width={40}
-                    height={40}
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <Image
+          className="mx-auto h-10 w-auto"
+          src="https://www.svgrepo.com/show/301692/login.svg"
+          alt="Workflow"
+          width={40}
+          height={40}
+        />
+        <h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
+          Create a new account
+        </h2>
+        <p className="mt-2 text-center text-sm leading-5 text-gray-600">
+          Or{' '}
+          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+            login to your account
+          </Link>
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6" method="POST" action="#">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium leading-5 text-gray-700">
+                Name
+              </label>
+              <div className="mt-1 rounded-md shadow-sm">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                  placeholder="John Doe"
                 />
-                <Title>Create a new account</Title>
-                <Subtitle>
-                    Or
-                    <StyledLink href="/login">login to your account</StyledLink>
-                </Subtitle>
-            </Header>
+              </div>
+            </div>
 
-            <FormContainer>
-                <Form method="POST" action="#">
-                    <div>
-                        <Label htmlFor="name">Name</Label>
-                        <InputContainer>
-                            <Input
-                                id="name"
-                                name="name"
-                                placeholder="John Doe"
-                                type="text"
-                                required
-                            />
-                        </InputContainer>
-                    </div>
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium leading-5 text-gray-700"
+              >
+                Username
+              </label>
+              <div className="mt-1 flex rounded-md shadow-sm">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                  goodeeds.com/
+                </span>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  className="flex-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                  placeholder="john"
+                />
+              </div>
+            </div>
 
-                    <div>
-                        <Label htmlFor="username">Username</Label>
-                        <UsernameInputContainer>
-                            <UsernamePrefix>goodeeds.com/</UsernamePrefix>
-                            <Input
-                                id="username"
-                                name="username"
-                                placeholder="john"
-                                type="text"
-                                required
-                            />
-                        </UsernameInputContainer>
-                    </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium leading-5 text-gray-700">
+                Email address
+              </label>
+              <div className="mt-1 rounded-md shadow-sm">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                  placeholder="user@example.com"
+                />
+              </div>
+            </div>
 
-                    <div>
-                        <Label htmlFor="email">Email address</Label>
-                        <InputContainer>
-                            <Input
-                                id="email"
-                                name="email"
-                                placeholder="user@example.com"
-                                type="email"
-                                required
-                            />
-                        </InputContainer>
-                    </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium leading-5 text-gray-700"
+              >
+                Password
+              </label>
+              <div className="mt-1 rounded-md shadow-sm">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                />
+              </div>
+            </div>
 
-                    <div>
-                        <Label htmlFor="password">Password</Label>
-                        <InputContainer>
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                required
-                            />
-                        </InputContainer>
-                    </div>
+            <div>
+              <label
+                htmlFor="password_confirmation"
+                className="block text-sm font-medium leading-5 text-gray-700"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-1 rounded-md shadow-sm">
+                <input
+                  id="password_confirmation"
+                  name="password_confirmation"
+                  type="password"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                />
+              </div>
+            </div>
 
-                    <div>
-                        <Label htmlFor="password_confirmation">Confirm Password</Label>
-                        <InputContainer>
-                            <Input
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                type="password"
-                                required
-                            />
-                        </InputContainer>
-                    </div>
-
-                    <SubmitButton type="submit">
-                        Create account
-                    </SubmitButton>
-                </Form>
-            </FormContainer>
-        </Container>
-    );
+            <div>
+              <button
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Create account
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }
