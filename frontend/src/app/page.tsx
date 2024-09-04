@@ -6,8 +6,11 @@ import Footer from "../../components/footer";
 import Header from "../../components/header";
 import Signup from "../../components/login_form";
 import "./globals.css";
+import Carousel from "../../components/carousel";
 
-
+const DATA = [{ image: "https://picsum.photos/seed/random101/500/500" },
+ { image: "https://picsum.photos/seed/random102/500/500" }, 
+ { image: "https://picsum.photos/seed/random103/500/500" }]
 
 export default function Home() {
   return (
@@ -45,6 +48,9 @@ export default function Home() {
           </div>
         </section>
 
+        <Carousel data={DATA} />
+
+        
         {/* Call to Action Section */}
         <section className="text-white text-center py-20">
           <h2 className="text-3xl font-bold mb-4">Ready to Make a Difference?</h2>
