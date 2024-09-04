@@ -1,72 +1,117 @@
 "use client"
 import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
-const Carousel = ({ data }: {
-    data: {
-        image: string
-    }[]
-}) => {
-    // State and Ref initialization
+const Carousel = ({ data }: { data: { image: string; text: string }[] }) => {
     const [currentImg, setCurrentImg] = useState(0)
-    const [carouselSize, setCarouselSize] = useState({ width: 0, height: 0 })
-    const carouselRef = useRef(null)
+    const carouselRef = useRef<HTMLDivElement>(null)
 
-    // useEffect to get the initial carousel size
+    const [startPos, setStartPos] = useState(0) // Starting position of the drag/swipe
+    const [isDragging, setIsDragging] = useState(false) // To track if dragging is in progress
+
+    // Function to go to the next image
+    const nextImage = () => {
+        setCurrentImg((prev) => (prev === data.length - 1 ? 0 : prev + 1))
+    }
+
+    // Function to go to the previous image
+    const prevImage = () => {
+        setCurrentImg((prev) => (prev === 0 ? data.length - 1 : prev - 1))
+    }
+
     useEffect(() => {
-        let elem = carouselRef.current as unknown as HTMLDivElement
-        let { width, height } = elem.getBoundingClientRect()
+        // When the image changes, slide the carousel to the new image
         if (carouselRef.current) {
-            setCarouselSize({
-                width,
-                height,
-            })
+            carouselRef.current.style.transform = `translateX(-${currentImg * 100}%)`
         }
-    }, [])
+    }, [currentImg])
+
+    // Handle mouse/touch start
+    const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+        setIsDragging(true)
+        setStartPos(e.type === 'touchstart' ? e.touches[0].clientX : (e as React.MouseEvent).clientX)
+    }
+
+    // Handle mouse/touch move
+    const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+        if (!isDragging) return
+        const currentPos = e.type === 'touchmove' ? e.touches[0].clientX : (e as React.MouseEvent).clientX
+        const diff = startPos - currentPos
+
+        if (diff > 50) {
+            // Swipe left - move to the next image
+            nextImage()
+            setIsDragging(false)
+        } else if (diff < -50) {
+            // Swipe right - move to the previous image
+            prevImage()
+            setIsDragging(false)
+        }
+    }
+
+    // Handle mouse/touch end
+    const handleTouchEnd = () => {
+        setIsDragging(false)
+    }
 
     return (
-        <div className='flex items-center justify-center'>
-            {/* Carousel container with buttons */}
-            <div className="flex flex-col items-center">
-                {/* Carousel Image container */}
-                <div className='w-80 h-60 rounded-md overflow-hidden relative'>
-                    <div
-                        ref={carouselRef}
-                        style={{
-                            left: -currentImg * carouselSize.width
-                        }}
-                        className='w-full h-full absolute flex transition-all duration-300'>
-                        {/* Map through data to render images */}
-                        {data.map((v, i) => (
-                            <div key={i} className='relative shrink-0 w-full h-full'>
-                                <Image
-                                    className='pointer-events-none'
-                                    alt={`carousel-image-${i}`}
-                                    fill
-                                    src={v.image || "https://random.imagecdn.app/500/500"}
-                                />
-                            </div>
-                        ))}
-                    </div>
+        <div
+            className="flex flex-col items-center justify-center my-12"
+            onMouseDown={handleTouchStart}
+            onMouseMove={handleTouchMove}
+            onMouseUp={handleTouchEnd}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+        >
+            {/* Carousel container */}
+            <div className="relative w-full max-w-4xl overflow-hidden rounded-lg">
+                {/* Flex container for sliding images */}
+                <div
+                    ref={carouselRef}
+                    className="flex transition-transform duration-500 ease-in-out w-full"
+                >
+                    {/* Image rendering */}
+                    {data.map((item, index) => (
+                        <div key={index} className="w-full flex-shrink-0 px-20">
+                            <Image
+                                src={item.image}
+                                alt={'Could not load the image'}
+                                layout="responsive"
+                                width={1600}  // Set a realistic width
+                                height={900}  // Set a realistic height to preserve aspect ratio
+                                className="rounded-lg pointer-events-none"
+                            />
+                            <p className='text-center text-lg mt-6'>{item.text}</p>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Navigation buttons (centered below the image) */}
-                <div className='flex justify-center mt-3 space-x-4'>
-                    <button
-                        disabled={currentImg === 0}
-                        onClick={() => setCurrentImg(prev => prev - 1)}
-                        className={`border px-4 py-2 font-bold ${currentImg === 0 && 'opacity-50'}`}
-                    >
-                        {"<"}
-                    </button>
-                    <button
-                        disabled={currentImg === data.length - 1}
-                        onClick={() => setCurrentImg(prev => prev + 1)}
-                        className={`border px-4 py-2 font-bold ${currentImg === data.length - 1 && 'opacity-50'}`}
-                    >
-                        {">"}
-                    </button>
-                </div>
+                {/* Navigation buttons */}
+                <button
+                    className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 opacity-75 hover:opacity-100"
+                    onClick={prevImage}
+                >
+                    {"<"}
+                </button>
+                <button
+                    className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white px-4 py-2 opacity-75 hover:opacity-100"
+                    onClick={nextImage}
+                >
+                    {">"}
+                </button>
+            </div>
+
+            {/* Image index indicator */}
+            <div className="mt-4">
+                {data.map((_, index) => (
+                    <span
+                        key={index}
+                        className={`mx-1 inline-block h-2 w-2 rounded-full ${
+                            index === currentImg ? 'bg-blue-500' : 'bg-gray-400'
+                        }`}
+                    ></span>
+                ))}
             </div>
         </div>
     )
