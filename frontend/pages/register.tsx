@@ -5,6 +5,7 @@ import RegisterForm from '../components/register_form';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import Head from 'next/head';
+import Link from 'next/link';
 
 export default function Register() {
   return (
@@ -20,9 +21,9 @@ export default function Register() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 ">
             Or{' '}
-            <a href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
               login to your account
-            </a>
+            </Link>
           </p>
         </div>
         <RegisterForm />
