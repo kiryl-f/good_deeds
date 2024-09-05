@@ -1,23 +1,24 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { UsersModule } from './users/users.module';
-// import { AuthModule } from './auth/auth.module';
-// import { User } from './users/users.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DATABASE_HOST || 'localhost',  // Ensure it reads DATABASE_HOST
-      port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-      username: process.env.DATABASE_USER || 'good_deeds',
-      password: process.env.DATABASE_PASSWORD || 'good_deeds',
-      database: process.env.DATABASE_NAME || 'good_deeds_db',
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      host: 'db',
+      port: 5432,
+      username: 'good_deeds',
+      password: 'good_deeds',
+      database: 'good_deeds_db',
+      entities: [],
       synchronize: true,
+      autoLoadEntities: true,
     }),
-    // UsersModule,
-    // AuthModule,
+
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

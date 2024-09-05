@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const app_controller_1 = require("./app.controller");
+const app_service_1 = require("./app.service");
 const typeorm_1 = require("@nestjs/typeorm");
 let AppModule = class AppModule {
 };
@@ -17,15 +19,18 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: process.env.DATABASE_HOST || 'localhost',
-                port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-                username: process.env.DATABASE_USER || 'good_deeds',
-                password: process.env.DATABASE_PASSWORD || 'good_deeds',
-                database: process.env.DATABASE_NAME || 'good_deeds_db',
-                entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+                host: 'db',
+                port: 5432,
+                username: 'good_deeds',
+                password: 'good_deeds',
+                database: 'good_deeds_db',
+                entities: [],
                 synchronize: true,
+                autoLoadEntities: true,
             }),
         ],
+        controllers: [app_controller_1.AppController],
+        providers: [app_service_1.AppService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

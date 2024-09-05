@@ -1,1 +1,0 @@
-{"version":3,"file":"jwt.confing.js","sourceRoot":"","sources":["../../src/auth/jwt.confing.ts"],"names":[],"mappings":";;;AAEa,QAAA,YAAY,GAAG;IAC1B,MAAM,EAAE,qBAAqB;CAC9B,CAAC;AAEW,QAAA,SAAS,GAAqB;IACzC,MAAM,EAAE,oBAAY,CAAC,MAAM;IAC3B,WAAW,EAAE;QACX,SAAS,EAAE,KAAK;KACjB;CACF,CAAC"}
