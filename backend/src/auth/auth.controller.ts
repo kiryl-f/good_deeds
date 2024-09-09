@@ -11,11 +11,14 @@ export class AuthController {
       loginDto.username,
       loginDto.password,
     );
-    console.log('login!!: ' + loginDto.username + ', ' + loginDto.password);
     if (!user) {
-      console.log('user not found')
       throw new UnauthorizedException('Invalid credentials');
     }
     return this.authService.login(user);
+  }
+
+  @Post('register')
+  async register(@Body() registerDto: { name: string, username: string; password: string, email: string }) {
+    return this.authService.register(registerDto);
   }
 }

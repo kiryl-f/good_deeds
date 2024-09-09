@@ -1,16 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiMenu, FiX } from 'react-icons/fi'; // Import icons for hamburger menu
+import { useRouter } from 'next/navigation'; // To handle redirection
 
 import '../src/app/globals.css';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null); // To store the logged-in user's ID
+  const [isMounted, setIsMounted] = useState(false); // To track if the component is mounted
+  const router = useRouter(); // To handle redirection
+
+  // Run this effect once on mount to check for client-side conditions like localStorage
+  useEffect(() => {
+    setIsMounted(true); // Now the component is mounted
+
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+
+      if (token && user) {
+        const parsedUser = JSON.parse(user);
+        setUserId(parsedUser.id); // Assuming the user object contains the 'id'
+        setIsLoggedIn(true);
+      }
+    }
+  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  const handleProfileClick = () => {
+    if (isLoggedIn && userId) {
+      // Redirect to the user's profile if logged in
+      router.push(`/users/${userId}`);
+    } else {
+      // Redirect to the login page if not logged in
+      router.push('/login');
+    }
+  };
+
+  // Ensure that the component renders only after it is mounted on the client
+  if (!isMounted) {
+    return null; // Avoid rendering during SSR
+  }
 
   return (
     <header className="bg-gray-800 text-white">
@@ -33,7 +69,10 @@ const Header = () => {
           <Link href="/" className="text-xl">Home</Link>
           <Link href="/deeds" className="text-xl">My Deeds</Link>
           <Link href="/friends" className="text-xl">Friends</Link>
-          <Link href="/profile" className="text-xl">Profile</Link>
+          {/* Profile button with conditional redirection */}
+          <button onClick={handleProfileClick} className="text-xl">
+            Profile
+          </button>
           <Link href="/login" className="text-xl">Login</Link>
         </nav>
       </div>
@@ -51,8 +90,11 @@ const Header = () => {
             <li>
               <Link href="/friends" className="text-xl" onClick={toggleMenu}>Friends</Link>
             </li>
+            {/* Profile button in mobile menu */}
             <li>
-              <Link href="/profile" className="text-xl" onClick={toggleMenu}>Profile</Link>
+              <button onClick={handleProfileClick} className="text-xl">
+                Profile
+              </button>
             </li>
             <li>
               <Link href="/login" className="text-xl" onClick={toggleMenu}>Login</Link>
