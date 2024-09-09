@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 export default function Register() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <Head>
         <title>Create account</title>
       </Head>

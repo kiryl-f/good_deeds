@@ -1,15 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import styled from 'styled-components'
-import Header from '../components/header';
-import Signup from '../components/login_form';
-
-
-import '../src/app/globals.css';
-
-
-import Footer from '../components/footer';
 import Head from 'next/head';
+import Header from '../components/header';
+import Footer from '../components/footer';
 import LoginForm from '../components/login_form';
 
 export default function Login() {
@@ -17,7 +10,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('submit')
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:3001/auth/login', {
@@ -27,7 +19,7 @@ export default function Login() {
       localStorage.setItem('token', response.data.access_token);
       alert('Login successful!');
     } catch (error) {
-      alert('Login failed!');
+      alert('Login failed! ' + error);
       console.error('Login failed:', error);
     }
   };
@@ -37,9 +29,15 @@ export default function Login() {
       <Head>
         <title>Login</title>
       </Head>
-      <Header/>
-      <LoginForm/>
-      <Footer/>
+      <Header />
+      <LoginForm
+        username={username}
+        password={password}
+        setUsername={setUsername}
+        setPassword={setPassword}
+        handleSubmit={handleSubmit}
+      />
+      <Footer />
     </div>
   );
 }

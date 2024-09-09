@@ -2,7 +2,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import '../src/app/globals.css';
 
-export default function LoginForm() {
+export default function LoginForm({
+  username,
+  password,
+  setUsername,
+  setPassword,
+  handleSubmit,
+}: {
+  username: string;
+  password: string;
+  setUsername: (value: string) => void;
+  setPassword: (value: string) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+}) {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -19,15 +31,14 @@ export default function LoginForm() {
         <p className="mt-2 text-center text-sm leading-5 text-gray-600">
           Or{' '}
           <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
-            create new account
+            create a new account
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" method="POST" action="#">
-            
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="username"
@@ -43,8 +54,10 @@ export default function LoginForm() {
                   id="username"
                   name="username"
                   type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="flex-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                  className="text-black flex-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-none rounded-r-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
                   placeholder="john"
                 />
               </div>
@@ -62,8 +75,10 @@ export default function LoginForm() {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
+                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm sm:leading-5"
                 />
               </div>
             </div>
