@@ -14,15 +14,15 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<any> {
     console.log('validating user ' + username + ' ' + password);
     const user = await this.usersService.findByUsername(username);
-    // if (user && (await bcrypt.compare(password, user.password))) {
-    //   const { password, ...result } = user; // Exclude password
-    //   return result;
-    // }
-    if (user) {
-      console.log('user '+ user.email + ' found')
+    if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user; // Exclude password
       return result;
     }
+    // if (user) {
+    //   console.log('user '+ user.email + ' found')
+    //   const { password, ...result } = user; // Exclude password
+    //   return result;
+    // }
     return null;
   }
 
