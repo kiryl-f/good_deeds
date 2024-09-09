@@ -62,12 +62,12 @@ export default function UserProfile() {
   const isOwnProfile = loggedInUser && loggedInUser.id === user.id;
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-l from-slate-50 to-cyan-600">
+    <div className="flex flex-col h-screen ">
       <Head>
         <title>{user.name}&apos;s Profile</title>
       </Head>
       <Header />
-      <main className="flex-grow bg-gray-100 py-10">
+      <main className="flex-grow py-10">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-4">{user.name}&apos;s Profile</h1>
           <p><strong>Username:</strong> {user.username}</p>
