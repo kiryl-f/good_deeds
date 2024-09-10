@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Image from 'next/image';
+import Deed from '../../components/deed';  // Import the Deed component
 
 interface User {
   id: number;
@@ -13,9 +14,17 @@ interface User {
   email: string;
 }
 
+interface DeedData {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null); // Logged in user's data
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null); // Logged-in user's data
+  const [deeds, setDeeds] = useState<DeedData[]>([]); // User deeds
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { id } = router.query; // Profile being viewed
@@ -45,29 +54,19 @@ export default function UserProfile() {
   }, [id]);
 
   const fetchDeeds = async () => {
-    const token = localStorage.getItem('token'); // Retrieve token from localStorage
-    if (!token) {
-      alert('You need to log in to access this page.');
-      return;
-    } else {
-      console.log('Cool, you are logged in: ' + localStorage.getItem('user'));
-    }
-  
     try {
-      const response = await axios.get('http://localhost:3001/deeds', {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        },
-      });
-      console.log(response.data); // Handle the response
+      const response = await axios.get(`http://localhost:3001/deeds/${id}`); // Assuming this is the endpoint to fetch user's deeds
+      setDeeds(response.data); // Set deeds for the user
     } catch (error) {
       console.error('Error fetching deeds:', error);
     }
   };
   
   useEffect(() => {
-    fetchDeeds();
-  }, []);
+    if (id) {
+      fetchDeeds(); // Fetch deeds when user ID is available
+    }
+  }, [id]);
   
   // Handle logout
   const handleLogout = () => {
@@ -94,12 +93,12 @@ export default function UserProfile() {
         <title>{user.name}&apos;s Profile</title>
       </Head>
       <Header />
-      <main className="flex-grow flex items-center justify-center py-10">
+      <main className="flex-grow flex flex-col items-center justify-center py-10">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
           {/* Profile Photo Placeholder */}
           <div className="flex justify-center mb-6">
             <Image
-              src="/placeholder-profile.png" // You can replace this with an actual profile image path or leave it as a placeholder.
+              src="/placeholder-profile.png" // Replace with actual profile image if available
               alt="Profile Picture"
               width={120}
               height={120}
@@ -114,10 +113,22 @@ export default function UserProfile() {
           {isOwnProfile && (
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors"
+              className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors mb-6"
             >
               Logout
             </button>
+          )}
+
+          {/* Deeds List */}
+          <h2 className="text-2xl font-bold mb-4">Good Deeds</h2>
+          {deeds.length === 0 ? (
+            <p className="text-gray-500">No deeds found.</p>
+          ) : (
+            <ul className="text-left">
+              {deeds.map((deed) => (
+                <Deed key={deed.id} {...deed} />  
+              ))}
+            </ul>
           )}
         </div>
       </main>
