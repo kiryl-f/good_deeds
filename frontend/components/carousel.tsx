@@ -1,4 +1,5 @@
 "use client"
+
 import Image from 'next/image'
 import React, { useState, useRef, useEffect } from 'react'
 
@@ -27,42 +28,51 @@ const Carousel = ({ data }: { data: { image: string; text: string }[] }) => {
     }, [currentImg])
 
     // Handle mouse/touch start
-    // const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
-    //     setIsDragging(true)
-    //     setStartPos(e.type === 'touchstart' ? e.touches[0].clientX : (e as React.MouseEvent).clientX)
-    // }
+    const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+        setIsDragging(true)
+        if ('touches' in e) {
+            setStartPos(e.touches[0].clientX)
+        } else {
+            setStartPos((e as React.MouseEvent).clientX)
+        }
+    }
 
-    // // Handle mouse/touch move
-    // const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
-    //     if (!isDragging) return
-    //     const currentPos = e.type === 'touchmove' ? e.touches[0].clientX : (e as React.MouseEvent).clientX
-    //     const diff = startPos - currentPos
+    // Handle mouse/touch move
+    const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+        if (!isDragging) return
+        let currentPos = 0
+        if ('touches' in e) {
+            currentPos = e.touches[0].clientX
+        } else {
+            currentPos = (e as React.MouseEvent).clientX
+        }
+        const diff = startPos - currentPos
 
-    //     if (diff > 50) {
-    //         // Swipe left - move to the next image
-    //         nextImage()
-    //         setIsDragging(false)
-    //     } else if (diff < -50) {
-    //         // Swipe right - move to the previous image
-    //         prevImage()
-    //         setIsDragging(false)
-    //     }
-    // }
+        if (diff > 50) {
+            // Swipe left - move to the next image
+            nextImage()
+            setIsDragging(false)
+        } else if (diff < -50) {
+            // Swipe right - move to the previous image
+            prevImage()
+            setIsDragging(false)
+        }
+    }
 
-    // // Handle mouse/touch end
-    // const handleTouchEnd = () => {
-    //     setIsDragging(false)
-    // }
+    // Handle mouse/touch end
+    const handleTouchEnd = () => {
+        setIsDragging(false)
+    }
 
     return (
         <div
-            className="flex flex-col items-center justify-center my-12"
-            // onMouseDown={handleTouchStart}
-            // onMouseMove={handleTouchMove}
-            // onMouseUp={handleTouchEnd}
-            // onTouchStart={handleTouchStart}
-            // onTouchMove={handleTouchMove}
-            // onTouchEnd={handleTouchEnd}
+            className="flex flex-col items-center justify-center my-8"
+            onMouseDown={handleTouchStart}
+            onMouseMove={handleTouchMove}
+            onMouseUp={handleTouchEnd}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
         >
             {/* Carousel container */}
             <div className="relative w-full max-w-4xl overflow-hidden rounded-lg">

@@ -17,6 +17,7 @@ export class GoodDeedsService {
   }
 
   async create(deedData: Partial<GoodDeed>, user: User): Promise<GoodDeed> {
+    console.log('creating deed: ' + deedData, ' ', user)
     const deed = this.goodDeedsRepository.create({ ...deedData, user });
     return this.goodDeedsRepository.save(deed);
   }

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Head from 'next/head';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
+import Image from 'next/image';
 
 interface User {
   id: number;
@@ -68,7 +69,6 @@ export default function UserProfile() {
     fetchDeeds();
   }, []);
   
-
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove token
@@ -88,29 +88,36 @@ export default function UserProfile() {
   // Check if the logged-in user is viewing their own profile
   const isOwnProfile = loggedInUser && loggedInUser.id === user.id;
 
-
   return (
-    <div className="flex flex-col h-screen ">
+    <div className="flex flex-col h-screen">
       <Head>
         <title>{user.name}&apos;s Profile</title>
       </Head>
       <Header />
-      <main className="flex-grow py-10">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-4">{user.name}&apos;s Profile</h1>
-          <p><strong>Username:</strong> {user.username}</p>
-          <p><strong>Email:</strong> {user.email}</p>
+      <main className="flex-grow flex items-center justify-center py-10">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
+          {/* Profile Photo Placeholder */}
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/placeholder-profile.png" // You can replace this with an actual profile image path or leave it as a placeholder.
+              alt="Profile Picture"
+              width={120}
+              height={120}
+              className="rounded-full border-4 border-gray-300"
+            />
+          </div>
+          <h1 className="text-3xl font-bold mb-4 text-gray-800">{user.name}&apos;s Profile</h1>
+          <p className="text-lg text-gray-600 mb-2"><strong>Username:</strong> {user.username}</p>
+          <p className="text-lg text-gray-600 mb-6"><strong>Email:</strong> {user.email}</p>
 
           {/* Display logout button if this is the logged-in user's profile */}
           {isOwnProfile && (
-            <div className="mt-6">
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                Logout
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors"
+            >
+              Logout
+            </button>
           )}
         </div>
       </main>

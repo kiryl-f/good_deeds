@@ -10,6 +10,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState<string | null>(null); // To store the logged-in user's ID
+  const [userProfilePic, setUserProfilePic] = useState<string | null>(null); // To store the profile picture
   const [isMounted, setIsMounted] = useState(false); // To track if the component is mounted
   const router = useRouter(); // To handle redirection
 
@@ -25,6 +26,11 @@ const Header = () => {
         const parsedUser = JSON.parse(user);
         setUserId(parsedUser.id); // Assuming the user object contains the 'id'
         setIsLoggedIn(true);
+
+        // Optionally, set a profile picture if available in the user object
+        if (parsedUser.profilePic) {
+          setUserProfilePic(parsedUser.profilePic);
+        }
       }
     }
   }, []);
@@ -65,15 +71,33 @@ const Header = () => {
         </div>
 
         {/* Navigation Links for larger screens */}
-        <nav className="hidden md:flex space-x-10">
+        <nav className="hidden md:flex space-x-10 items-center">
           <Link href="/" className="text-xl">Home</Link>
           <Link href="/deeds" className="text-xl">My Deeds</Link>
           <Link href="/friends" className="text-xl">Friends</Link>
-          {/* Profile button with conditional redirection */}
-          <button onClick={handleProfileClick} className="text-xl">
-            Profile
-          </button>
-          <Link href="/login" className="text-xl">Login</Link>
+          
+          {/* Show profile picture or placeholder when logged in */}
+          {isLoggedIn ? (
+            <div className="flex items-center space-x-4">
+              <button onClick={handleProfileClick} className="text-xl">
+                {userProfilePic ? (
+                  <Image
+                    src={userProfilePic}
+                    alt="Profile Picture"
+                    width={40}
+                    height={40}
+                    className="rounded-full cursor-pointer"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center cursor-pointer">
+                    <span className="text-white font-bold">U</span> {/* Placeholder */}
+                  </div>
+                )}
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="text-xl">Login</Link>
+          )}
         </nav>
       </div>
 
@@ -91,14 +115,30 @@ const Header = () => {
               <Link href="/friends" className="text-xl" onClick={toggleMenu}>Friends</Link>
             </li>
             {/* Profile button in mobile menu */}
-            <li>
-              <button onClick={handleProfileClick} className="text-xl">
-                Profile
-              </button>
-            </li>
-            <li>
-              <Link href="/login" className="text-xl" onClick={toggleMenu}>Login</Link>
-            </li>
+            {isLoggedIn ? (
+              <li>
+                <button onClick={handleProfileClick} className="text-xl flex items-center space-x-2">
+                  {userProfilePic ? (
+                    <Image
+                      src={userProfilePic}
+                      alt="Profile Picture"
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center">
+                      <span className="text-white font-bold">U</span> {/* Placeholder */}
+                    </div>
+                  )}
+                  <span>Profile</span>
+                </button>
+              </li>
+            ) : (
+              <li>
+                <Link href="/login" className="text-xl" onClick={toggleMenu}>Login</Link>
+              </li>
+            )}
           </ul>
         </nav>
       )}

@@ -7,7 +7,7 @@ import { GetUser } from '../auth/get-user.decorator'; // Custom decorator to get
 import { User } from '../users/user.entity';
 
 @Controller('deeds')
-@UseGuards(JwtAuthGuard) // Protect the endpoints with JWT Auth
+
 export class GoodDeedsController {
   constructor(private readonly goodDeedsService: GoodDeedsService) {}
 
@@ -20,6 +20,7 @@ export class GoodDeedsController {
   @Post()
   async createDeed(@Body() deedData: Partial<GoodDeed>, @GetUser() user: User): Promise<GoodDeed> {
     // Create a new deed associated with the authenticated user
+    console.log('create deed:' + deedData);
     return this.goodDeedsService.create(deedData, user);
   }
 
