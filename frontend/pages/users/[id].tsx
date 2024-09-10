@@ -19,6 +19,13 @@ export default function UserProfile() {
   const router = useRouter();
   const { id } = router.query; // Profile being viewed
 
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      setLoggedInUser(JSON.parse(user)); // Parse and store logged-in user data
+    }
+  }, []);
+  
   // Fetch the profile data when the component mounts
   useEffect(() => {
     if (id) {
@@ -34,13 +41,33 @@ export default function UserProfile() {
 
       fetchUser();
     }
-
-    // Fetch the logged-in user from localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setLoggedInUser(JSON.parse(storedUser));
-    }
   }, [id]);
+
+  const fetchDeeds = async () => {
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
+    if (!token) {
+      alert('You need to log in to access this page.');
+      return;
+    } else {
+      console.log('Cool, you are logged in: ' + localStorage.getItem('user'));
+    }
+  
+    try {
+      const response = await axios.get('http://localhost:3001/deeds', {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      });
+      console.log(response.data); // Handle the response
+    } catch (error) {
+      console.error('Error fetching deeds:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchDeeds();
+  }, []);
+  
 
   // Handle logout
   const handleLogout = () => {
@@ -60,6 +87,7 @@ export default function UserProfile() {
 
   // Check if the logged-in user is viewing their own profile
   const isOwnProfile = loggedInUser && loggedInUser.id === user.id;
+
 
   return (
     <div className="flex flex-col h-screen ">
