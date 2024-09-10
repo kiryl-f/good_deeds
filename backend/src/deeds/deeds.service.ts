@@ -1,41 +1,38 @@
-// src/gooddeeds/gooddeeds.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GoodDeed } from './deed.entity';
+import { Deed } from './deed.entity';
 import { User } from '../users/user.entity';
 
 @Injectable()
-export class GoodDeedsService {
+export class DeedsService {
   constructor(
-    @InjectRepository(GoodDeed)
-    private readonly goodDeedsRepository: Repository<GoodDeed>,
+    @InjectRepository(Deed)
+    private deedsRepository: Repository<Deed>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
-  async findAllByUser(user: User): Promise<GoodDeed[]> {
-    return this.goodDeedsRepository.find({ where: { user } });
+  async findAll(): Promise<Deed[]> {
+    return this.deedsRepository.find({ relations: ['user'] });
   }
 
-  async create(deedData: Partial<GoodDeed>, user: User): Promise<GoodDeed> {
-    console.log('creating deed: ' + deedData, ' ', user)
-    const deed = this.goodDeedsRepository.create({ ...deedData, user });
-    return this.goodDeedsRepository.save(deed);
+  async findByUserId(userId: number): Promise<Deed[]> {
+    return this.deedsRepository.find({ where: { user: { id: userId } }, relations: ['user'] });
   }
 
-  async update(id: number, deedData: Partial<GoodDeed>, user: User): Promise<GoodDeed> {
-    const deed = await this.goodDeedsRepository.findOne({ where: { id, user } });
-    if (!deed) {
-      throw new NotFoundException('Deed not found');
+  async create(title: string, description: string, userId: number): Promise<Deed> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
     }
-    Object.assign(deed, deedData);
-    return this.goodDeedsRepository.save(deed);
-  }
 
-  async delete(id: number, user: User): Promise<void> {
-    const deed = await this.goodDeedsRepository.findOne({ where: { id, user } });
-    if (!deed) {
-      throw new NotFoundException('Deed not found');
-    }
-    await this.goodDeedsRepository.delete(id);
+    const deed = this.deedsRepository.create({
+      title,
+      description,
+      user,
+    });
+
+    return this.deedsRepository.save(deed);
   }
 }

@@ -1,42 +1,27 @@
-// src/gooddeeds/gooddeeds.controller.ts
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
-import { GoodDeedsService } from './deeds.service';
-import { GoodDeed } from './deed.entity';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Assuming JWT Auth is in place
-import { GetUser } from '../auth/get-user.decorator'; // Custom decorator to get user from JWT
-import { User } from '../users/user.entity';
+import { Body, Controller, Get, Post, Param } from '@nestjs/common';
+import { DeedsService } from './deeds.service';
+import { Deed } from './deed.entity';
 
 @Controller('deeds')
-
-export class GoodDeedsController {
-  constructor(private readonly goodDeedsService: GoodDeedsService) {}
+export class DeedsController {
+  constructor(private deedsService: DeedsService) {}
 
   @Get()
-  async getAllDeeds(@GetUser() user: User): Promise<GoodDeed[]> {
-    // Fetch all deeds belonging to the authenticated user
-    return this.goodDeedsService.findAllByUser(user);   
+  findAll(): Promise<Deed[]> {
+    return this.deedsService.findAll();
+  }
+
+  @Get(':userId')
+  findByUserId(@Param('userId') userId: number): Promise<Deed[]> {
+    return this.deedsService.findByUserId(userId);
   }
 
   @Post()
-  async createDeed(@Body() deedData: Partial<GoodDeed>, @GetUser() user: User): Promise<GoodDeed> {
-    // Create a new deed associated with the authenticated user
-    console.log('create deed:' + deedData);
-    return this.goodDeedsService.create(deedData, user);
-  }
-
-  @Put(':id')
-  async updateDeed(
-    @Param('id') id: number,
-    @Body() deedData: Partial<GoodDeed>,
-    @GetUser() user: User,
-  ): Promise<GoodDeed> {
-    // Update a deed that belongs to the authenticated user
-    return this.goodDeedsService.update(id, deedData, user);
-  }
-
-  @Delete(':id')
-  async deleteDeed(@Param('id') id: number, @GetUser() user: User): Promise<void> {
-    // Delete a deed that belongs to the authenticated user
-    return this.goodDeedsService.delete(id, user);
+  createDeed(
+    @Body('title') title: string,
+    @Body('description') description: string,
+    @Body('userId') userId: number, // Receive userId from the request body
+  ): Promise<Deed> {
+    return this.deedsService.create(title, description, userId);
   }
 }

@@ -1,9 +1,8 @@
-// src/gooddeeds/gooddeed.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
 
 @Entity()
-export class GoodDeed {
+export class Deed {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,10 +12,6 @@ export class GoodDeed {
   @Column()
   description: string;
 
-  @Column({ default: false })
-  completed: boolean;
-
-  // Many deeds can belong to one user
-  @ManyToOne(() => User, (user) => user.deeds, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user.deeds)
   user: User;
 }

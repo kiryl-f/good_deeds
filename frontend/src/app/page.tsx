@@ -55,33 +55,34 @@ export default function Home() {
   const handleAddDeed = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('You must be logged in to add a good deed.');
+      const user = JSON.parse(localStorage.getItem('user') || '{}'); // Retrieve the user from localStorage
+      if (!user || !user.id) {
+        setError('User not found. You must be logged in to add a good deed.');
         return;
       }
-
+  
       const response = await axios.post(
         'http://localhost:3001/deeds',
         {
           title: deed,
           description: description,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add token to the headers
-          },
+          userId: user.id  // Pass user ID to the backend
         }
       );
-
+  
       if (response.status === 201) {
         setSuccess('Good deed added successfully!');
-        handleCloseModal();
+        setDeed('');
+        setDescription('');
+        setError(null);
+        setIsModalOpen(false);
       }
     } catch (err) {
-      setError('Failed to add good deed. Try again. ' + err);
+      setError('Failed to add good deed. Please try again.');
     }
   };
+
+  
 
   return (
     <main className="flex flex-col min-h-screen">
