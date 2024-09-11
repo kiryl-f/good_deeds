@@ -11,6 +11,7 @@ interface User {
   name: string;
   username: string;
   email: string;
+  sentFriendRequests: number[]; // Friend request IDs
 }
 
 interface Friend {
@@ -27,14 +28,15 @@ export default function UserProfile() {
   const router = useRouter();
   const { id } = router.query; // Profile being viewed
 
+  // Fetch logged-in user from localStorage
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setLoggedInUser(JSON.parse(user)); // Parse and store logged-in user data
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setLoggedInUser(JSON.parse(storedUser));
     }
   }, []);
-  
-  // Fetch the profile data when the component mounts
+
+  // Fetch the profile and friends of the user being viewed
   useEffect(() => {
     if (id) {
       const fetchUser = async () => {
@@ -46,50 +48,68 @@ export default function UserProfile() {
           setError('User not found');
         }
       };
-      fetchUser();
-    }
-  }, [id]);
 
-  // Fetch the user's friends
-  useEffect(() => {
-    if (id) {
       const fetchFriends = async () => {
         try {
-          const response = await axios.get(`http://localhost:3001/friends`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
+          const response = await axios.get(`http://localhost:3001/users/${id}/friends`);
           setFriends(response.data);
         } catch (error) {
+          console.error('Error fetching friends:', error);
           setError('Failed to fetch friends.');
         }
       };
+
+      fetchUser();
       fetchFriends();
     }
   }, [id]);
 
+  // Send friend request
+  const handleSendFriendRequest = async (accepterId: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      await axios.post(
+        `http://localhost:3001/users/${accepterId}/friend-request`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Friend request sent!');
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      alert('Failed to send friend request.');
+    }
+  };
+
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove token
-    localStorage.removeItem('user'); // Remove user info
-    setLoggedInUser(null); // Clear logged-in user state
-    router.push('/login'); // Redirect to login page
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setLoggedInUser(null);
+    router.push('/login');
   };
 
   if (error) {
-    return <p>{error}</p>;
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
   }
 
   if (!user) {
-    return <p>Loading...</p>;
+    return <div className="text-center mt-10">Loading...</div>;
   }
 
-  // Check if the logged-in user is viewing their own profile
+  // Check if logged-in user is viewing their own profile
   const isOwnProfile = loggedInUser && loggedInUser.id === user.id;
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       <Head>
         <title>{user.name}&apos;s Profile</title>
       </Head>
@@ -113,12 +133,26 @@ export default function UserProfile() {
           {/* Friends List */}
           <h2 className="text-2xl font-bold mb-4">Friends</h2>
           <ul>
-            {friends.map((friend) => (
-              <li key={friend.id} className="text-lg text-gray-600">
-                {friend.name} ({friend.username})
-              </li>
-            ))}
+            {friends.length > 0 ? (
+              friends.map((friend) => (
+                <li key={friend.id} className="text-lg text-gray-600">
+                  {friend.name} ({friend.username})
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-600">No friends found.</p>
+            )}
           </ul>
+
+          {/* Send Friend Request */}
+          {!isOwnProfile && loggedInUser && !loggedInUser.sentFriendRequests.includes(user.id) && (
+            <button
+              onClick={() => handleSendFriendRequest(user.id)}
+              className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors mt-6"
+            >
+              Add Friend
+            </button>
+          )}
 
           {/* Display logout button if this is the logged-in user's profile */}
           {isOwnProfile && (

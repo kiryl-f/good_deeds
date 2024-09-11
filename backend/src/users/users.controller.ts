@@ -4,7 +4,7 @@ import { User } from './user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   //get all users
   @Get()
@@ -32,7 +32,7 @@ export class UsersController {
 
   //update user
   @Put(':id')
-  async update (@Param('id') id: number, @Body() user: User): Promise<any> {
+  async update(@Param('id') id: number, @Body() user: User): Promise<any> {
     return this.usersService.update(id, user);
   }
 
@@ -45,6 +45,33 @@ export class UsersController {
       throw new NotFoundException('User does not exist!');
     }
     return this.usersService.delete(id);
+  }
+
+  // Endpoint to send a friend request
+  @Post(':id/friend-request')
+  async sendFriendRequest(
+    @Param('id') requesterId: number,
+    @Body('accepterId') accepterId: number,
+  ): Promise<User> {
+    return this.usersService.sendFriendRequest(requesterId, accepterId);
+  }
+
+  // Endpoint to accept a friend request
+  @Post(':id/accept-friend-request')
+  async acceptFriendRequest(
+    @Param('id') accepterId: number,
+    @Body('requesterId') requesterId: number,
+  ): Promise<User> {
+    return this.usersService.acceptFriendRequest(requesterId, accepterId);
+  }
+
+  // Endpoint to remove a friend request
+  @Delete(':id/friend-request')
+  async removeFriendRequest(
+    @Param('id') requesterId: number,
+    @Body('accepterId') accepterId: number,
+  ): Promise<User> {
+    return this.usersService.removeFriendRequest(requesterId, accepterId);
   }
 }
 

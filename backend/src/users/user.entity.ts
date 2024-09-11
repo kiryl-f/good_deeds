@@ -21,5 +21,11 @@ export class User {
     // One user can have many good deeds
     @OneToMany(() => Deed, (deed) => deed.user)
     deeds: Deed[];
+    // Field for sent friend requests (IDs of users to whom this user sent friend requests)
+    @Column('int', { array: true, default: [] })
+    sentFriendRequests: number[];
+
+    // Field for received friend requests (IDs of users who sent friend requests to this user)
+    @Column('int', { array: true, default: [] })
+    receivedFriendRequests: number[];
 }
-    

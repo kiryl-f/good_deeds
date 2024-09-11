@@ -4,25 +4,28 @@ import Head from 'next/head';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import UserCard from '../components/user_card';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: number;
   name: string;
   username: string;
-  goodDeedsCount: number; // Add any other fields you need here
+  goodDeedsCount: number;
 }
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]); // Define the state as an array of User
+  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:3001/users');
-        setUsers(response.data); // Make sure the backend sends data in the correct format
+        setUsers(response.data);
       } catch (err) {
-        setError('Failed to fetch users.');
+        setError('Failed to fetch users');
       }
     };
     fetchUsers();
@@ -31,16 +34,19 @@ export default function UsersPage() {
   const handleAddFriend = async (userId: number) => {
     const token = localStorage.getItem('token');
     if (!token) {
+      router.push('/login');  // Redirect to login if not logged in
       return;
     }
 
     try {
-      await axios.post(`http://localhost:3001/friends/${userId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert('Friend added successfully!');
+      await axios.post(
+        `http://localhost:3001/users/${userId}/friend-request`,
+        { accepterId: userId },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      alert('Friend request sent');
     } catch (error) {
-      alert('Failed to add friend.');
+      alert('Failed to send friend request');
     }
   };
 
