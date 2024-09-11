@@ -16,33 +16,48 @@ interface User {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // State for the current user
   const router = useRouter();
 
+  useEffect(() => {
+    // Ensure localStorage is accessed only in the browser
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem('user');
+      if (user) {
+        setCurrentUser(JSON.parse(user)); // Parse and store current user in state
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:3001/users');
-        setUsers(response.data);
+        // Filter out the current user if available
+        const filteredUsers = currentUser
+          ? response.data.filter((user: User) => user.id !== currentUser.id)
+          : response.data;
+        setUsers(filteredUsers);
       } catch (err) {
         setError('Failed to fetch users');
       }
     };
-    fetchUsers();
-  }, []);
+
+    if (currentUser !== null) {
+      fetchUsers();
+    }
+  }, [currentUser]);
 
   const handleAddFriend = async (userId: number) => {
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    console.log('user sending request: ' + user);
-    if (!token) {
+    if (!token || !currentUser) {
       router.push('/login');  // Redirect to login if not logged in
       return;
     }
 
     try {
       await axios.post(
-        `http://localhost:3001/users/${JSON.parse(user!!).id}/friend-request`,
+        `http://localhost:3001/users/${currentUser.id}/friend-request`,
         { accepterId: userId },
         { headers: { Authorization: `Bearer ${token}` } },
       );

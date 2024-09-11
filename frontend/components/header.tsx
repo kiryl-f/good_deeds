@@ -74,7 +74,7 @@ const Header = () => {
         <nav className="hidden md:flex space-x-10 items-center">
           <Link href="/" className="text-xl">Home</Link>
           <Link href="/deeds" className="text-xl">My Deeds</Link>
-          <Link href="/friends" className="text-xl">Friends</Link>
+          <Link href="/userboard" className="text-xl">Users</Link>
           
           {/* Show profile picture or placeholder when logged in */}
           {isLoggedIn ? (
@@ -112,7 +112,7 @@ const Header = () => {
               <Link href="/deeds" className="text-xl" onClick={toggleMenu}>My Deeds</Link>
             </li>
             <li>
-              <Link href="/friends" className="text-xl" onClick={toggleMenu}>Friends</Link>
+              <Link href="/userboard" className="text-xl" onClick={toggleMenu}>Users</Link>
             </li>
             {/* Profile button in mobile menu */}
             {isLoggedIn ? (

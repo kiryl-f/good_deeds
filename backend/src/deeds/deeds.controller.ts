@@ -16,6 +16,11 @@ export class DeedsController {
     return this.deedsService.findByUserId(userId);
   }
 
+  @Get('latest')
+  async getLatestDeeds() {
+    return this.deedsService.findLatestDeeds();
+  }
+
   @Post()
   createDeed(
     @Body('title') title: string,

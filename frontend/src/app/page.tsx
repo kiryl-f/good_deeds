@@ -12,10 +12,20 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const DATA = [
-  { image: '/carousel_imgs/image1.jpg', text: 'Text 1' },
-  { image: '/carousel_imgs/image2.jpg', text: 'Text 2' },
-  { image: '/carousel_imgs/image3.jpg', text: 'Text 3' },
+  { image: '/carousel_imgs/image1.jpg', text: 'At this photo you can see one of our users helping homeless kittens' },
+  { image: '/carousel_imgs/image2.jpg', text: 'This is just an AI generated image that is supposed to be related to the topic of this app' },
+  { image: '/carousel_imgs/image3.jpg', text: 'Pretty much the same situation here' },
 ];
+
+
+interface Deed {
+  id: number;
+  title: string;
+  description: string;
+  user: {
+    name: string;
+  };
+}
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,10 +34,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<any>(null); // Holds user info if logged in
+  const [user, setUser] = useState<any>(null); 
 
-  
-  // Check if the user is logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -56,10 +64,10 @@ export default function Home() {
   const handleAddDeed = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    
+
 
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}'); // Retrieve the user from localStorage
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user || !user.id) {
         setError('User not found. You must be logged in to add a good deed.');
         return;
@@ -70,7 +78,7 @@ export default function Home() {
         {
           title: deed,
           description: description,
-          userId: user.id  // Pass user ID to the backend
+          userId: user.id  
         }
       );
 
@@ -86,6 +94,38 @@ export default function Home() {
     }
   };
 
+  interface Deed {
+    id: number;
+    title: string;
+    description: string;
+    user: {
+      name: string;
+    };
+    createdAt: string;
+  }
+
+  const [latestDeeds, setLatestDeeds] = useState<Deed[]>([]);
+
+  const fetchLatestDeeds = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/deeds');
+      const deeds = response.data;
+
+      // Sort deeds by creation date and pick the latest 3
+      const latest = deeds
+        .sort((a: Deed, b: Deed) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 3);
+
+      setLatestDeeds(latest);
+    } catch (error) {
+      console.error('Error fetching latest deeds:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestDeeds();
+  }, []);
+
 
 
   return (
@@ -95,7 +135,6 @@ export default function Home() {
       </Head>
       <Header />
       <main className="flex-grow">
-        {/* Hero Section */}
         <section className="text-white text-left py-10 px-6 md:py-20 md:px-10 lg:py-24 lg:px-16 md:ml-10 lg:ml-10 ml-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">Welcome to Good Deeds Platform</h1>
           <p className="text-lg md:text-2xl mb-8">Join us in making the world a better place, one good deed at a time.</p>
@@ -106,7 +145,6 @@ export default function Home() {
           )}
         </section>
 
-        {/* Features Section */}
         <section className="container mx-auto py-10 px-4 md:py-16 md:px-8 lg:py-20 lg:px-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-12">Why Choose Us?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -129,12 +167,46 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Carousel Section */}
+        <section className="container mx-auto py-10 md:py-16 lg:py-20">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Our Impact</h2>
+            <p className="text-lg md:text-xl mb-8">See how we are making a difference together.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <h3 className="text-4xl font-bold text-white">10,000+</h3>
+                <p>Good Deeds Completed</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-4xl font-bold text-white">5,000+</h3>
+                <p>Active Users</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-4xl font-bold text-white">50+</h3>
+                <p>Countries Reached</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section className="container mx-auto py-10 md:py-16 lg:py-20">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-12">Latest Good Deeds</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {latestDeeds.map(deed => (
+              <div key={deed.id} className="p-4 bg-gray-100 rounded-lg shadow-md">
+                <h3 className="font-bold text-base text-gray-600 mb-4">{deed.title}</h3>
+                <p className="text-gray-600">{deed.description}</p>
+                <p className="text-gray-600 mt-2">by {deed.user.name}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="container mx-auto py-10 md:py-16 lg:py-20">
           <Carousel data={DATA} />
         </section>
 
-        {/* Call to Action Section */}
+
         <section className="text-white text-center py-10 md:py-16 lg:py-20 px-6">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Ready to Make a Difference?</h2>
           <p className="text-lg md:text-xl mb-8">Sign up today and start your journey of positive impact.</p>

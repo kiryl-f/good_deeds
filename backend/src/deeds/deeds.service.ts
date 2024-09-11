@@ -21,6 +21,14 @@ export class DeedsService {
     return this.deedsRepository.find({ where: { user: { id: userId } }, relations: ['user'] });
   }
 
+  async findLatestDeeds(): Promise<Deed[]> {
+    return this.deedsRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 3, // Limit to 6 latest deeds
+      relations: ['user'], // Include related user data
+    });
+  }
+
   async create(title: string, description: string, userId: number): Promise<Deed> {
     const user = await this.usersRepository.findOne({ where: { id: userId } });
     if (!user) {
