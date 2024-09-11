@@ -33,6 +33,8 @@ export default function UsersPage() {
 
   const handleAddFriend = async (userId: number) => {
     const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    console.log('user sending request: ' + user);
     if (!token) {
       router.push('/login');  // Redirect to login if not logged in
       return;
@@ -40,7 +42,7 @@ export default function UsersPage() {
 
     try {
       await axios.post(
-        `http://localhost:3001/users/${userId}/friend-request`,
+        `http://localhost:3001/users/${JSON.parse(user!!).id}/friend-request`,
         { accepterId: userId },
         { headers: { Authorization: `Bearer ${token}` } },
       );

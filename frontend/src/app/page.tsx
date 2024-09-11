@@ -26,6 +26,7 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null); // Holds user info if logged in
 
+  
   // Check if the user is logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -54,6 +55,9 @@ export default function Home() {
 
   const handleAddDeed = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    
+
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}'); // Retrieve the user from localStorage
       if (!user || !user.id) {

@@ -4,15 +4,13 @@ import { User } from './user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
-  //get all users
   @Get()
   async findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
-  //get user by id
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
     const user = await this.usersService.findOne(id);
@@ -23,23 +21,18 @@ export class UsersController {
     }
   }
 
-  //create user
   @Post()
   async create(@Body() user: User): Promise<User> {
-    console.log('user create')
     return this.usersService.create(user);
   }
 
-  //update user
   @Put(':id')
   async update(@Param('id') id: number, @Body() user: User): Promise<any> {
     return this.usersService.update(id, user);
   }
 
-  //delete user
   @Delete(':id')
   async delete(@Param('id') id: number): Promise<any> {
-    //handle error if user does not exist
     const user = await this.usersService.findOne(id);
     if (!user) {
       throw new NotFoundException('User does not exist!');
@@ -47,7 +40,6 @@ export class UsersController {
     return this.usersService.delete(id);
   }
 
-  // Endpoint to send a friend request
   @Post(':id/friend-request')
   async sendFriendRequest(
     @Param('id') requesterId: number,
@@ -56,7 +48,6 @@ export class UsersController {
     return this.usersService.sendFriendRequest(requesterId, accepterId);
   }
 
-  // Endpoint to accept a friend request
   @Post(':id/accept-friend-request')
   async acceptFriendRequest(
     @Param('id') accepterId: number,
@@ -65,7 +56,6 @@ export class UsersController {
     return this.usersService.acceptFriendRequest(requesterId, accepterId);
   }
 
-  // Endpoint to remove a friend request
   @Delete(':id/friend-request')
   async removeFriendRequest(
     @Param('id') requesterId: number,
@@ -73,5 +63,9 @@ export class UsersController {
   ): Promise<User> {
     return this.usersService.removeFriendRequest(requesterId, accepterId);
   }
-}
 
+  @Get(':id/friends')
+  async getFriends(@Param('id') userId: number): Promise<User[]> {
+    return this.usersService.getFriends(userId);
+  }
+}
