@@ -15,17 +15,6 @@ export default function Register() {
       </Head>
       <Header />
       <div className="flex-grow flex flex-col justify-center bg-gradient-to-l from-slate-50 to-cyan-600 py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md  mb-15" >
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Create a new account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 mb-10">
-            Or{' '}
-            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-              login to your account
-            </Link>
-          </p>
-        </div>
         <RegisterForm />
       </div>
       <Footer />

@@ -5,7 +5,6 @@ import Head from 'next/head';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Image from 'next/image';
-import Deed from '../../components/deed';  // Import the Deed component
 
 interface User {
   id: number;
@@ -14,17 +13,16 @@ interface User {
   email: string;
 }
 
-interface DeedData {
+interface Friend {
   id: number;
-  title: string;
-  description: string;
-  completed: boolean;
+  name: string;
+  username: string;
 }
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null); // Logged-in user's data
-  const [deeds, setDeeds] = useState<DeedData[]>([]); // User deeds
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null); // Logged in user's data
+  const [friends, setFriends] = useState<Friend[]>([]); // Friends list
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { id } = router.query; // Profile being viewed
@@ -48,26 +46,29 @@ export default function UserProfile() {
           setError('User not found');
         }
       };
-
       fetchUser();
     }
   }, [id]);
 
-  const fetchDeeds = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3001/deeds/${id}`); // Assuming this is the endpoint to fetch user's deeds
-      setDeeds(response.data); // Set deeds for the user
-    } catch (error) {
-      console.error('Error fetching deeds:', error);
-    }
-  };
-  
+  // Fetch the user's friends
   useEffect(() => {
     if (id) {
-      fetchDeeds(); // Fetch deeds when user ID is available
+      const fetchFriends = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3001/friends`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+          setFriends(response.data);
+        } catch (error) {
+          setError('Failed to fetch friends.');
+        }
+      };
+      fetchFriends();
     }
   }, [id]);
-  
+
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove token
@@ -93,12 +94,12 @@ export default function UserProfile() {
         <title>{user.name}&apos;s Profile</title>
       </Head>
       <Header />
-      <main className="flex-grow flex flex-col items-center justify-center py-10">
+      <main className="flex-grow flex items-center justify-center py-10">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
           {/* Profile Photo Placeholder */}
           <div className="flex justify-center mb-6">
             <Image
-              src="/placeholder-profile.png" // Replace with actual profile image if available
+              src="/placeholder-profile.png"
               alt="Profile Picture"
               width={120}
               height={120}
@@ -109,26 +110,24 @@ export default function UserProfile() {
           <p className="text-lg text-gray-600 mb-2"><strong>Username:</strong> {user.username}</p>
           <p className="text-lg text-gray-600 mb-6"><strong>Email:</strong> {user.email}</p>
 
+          {/* Friends List */}
+          <h2 className="text-2xl font-bold mb-4">Friends</h2>
+          <ul>
+            {friends.map((friend) => (
+              <li key={friend.id} className="text-lg text-gray-600">
+                {friend.name} ({friend.username})
+              </li>
+            ))}
+          </ul>
+
           {/* Display logout button if this is the logged-in user's profile */}
           {isOwnProfile && (
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors mb-6"
+              className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors mt-6"
             >
               Logout
             </button>
-          )}
-
-          {/* Deeds List */}
-          <h2 className="text-2xl font-bold mb-4">Good Deeds</h2>
-          {deeds.length === 0 ? (
-            <p className="text-gray-500">No deeds found.</p>
-          ) : (
-            <ul className="text-left">
-              {deeds.map((deed) => (
-                <Deed key={deed.id} {...deed} />  
-              ))}
-            </ul>
           )}
         </div>
       </main>

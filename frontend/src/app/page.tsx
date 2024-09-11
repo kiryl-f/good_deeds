@@ -60,7 +60,7 @@ export default function Home() {
         setError('User not found. You must be logged in to add a good deed.');
         return;
       }
-  
+
       const response = await axios.post(
         'http://localhost:3001/deeds',
         {
@@ -69,7 +69,7 @@ export default function Home() {
           userId: user.id  // Pass user ID to the backend
         }
       );
-  
+
       if (response.status === 201) {
         setSuccess('Good deed added successfully!');
         setDeed('');
@@ -82,7 +82,7 @@ export default function Home() {
     }
   };
 
-  
+
 
   return (
     <main className="flex flex-col min-h-screen">
@@ -118,6 +118,7 @@ export default function Home() {
               <p>Join forces with friends and inspire each other to do more good.</p>
             </div>
             <div className="text-center flex flex-col justify-center items-center">
+              <Image src={'/landing3.png'} width={300} height={300} alt="Good Deeds" />
               <h3 className="text-2xl md:text-3xl font-bold mb-2">Easy to Use</h3>
               <p>Our platform is designed with simplicity in mind, so you can focus on what matters.</p>
             </div>
@@ -139,45 +140,45 @@ export default function Home() {
             </Link>
           )}
           {isLoggedIn && (
-          <div className="flex justify-center container mx-auto px-4">
-            <button
-              onClick={handleOpenModal}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg"
-            >
-              Add Good Deed
-            </button>
+            <div className="flex justify-center container mx-auto px-4">
+              <button
+                onClick={handleOpenModal}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-lg"
+              >
+                Add Good Deed
+              </button>
 
-            <AddDeedModal isOpen={isModalOpen} onClose={handleCloseModal}>
-              <h2 className="text-2xl font-bold mb-6 text-black text-center">Add a New Good Deed</h2>
-              <form onSubmit={handleAddDeed} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium">Deed</label>
-                  <input
-                    type="text"
-                    value={deed}
-                    onChange={(e) => setDeed(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 border rounded text-black"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium">Description</label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 border rounded text-black"
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Submit
-                  </button>
-                </div>
-              </form>
-            </AddDeedModal>
-          </div>
-        )}
+              <AddDeedModal isOpen={isModalOpen} onClose={handleCloseModal}>
+                <h2 className="text-2xl font-bold mb-6 text-black text-center">Add a New Good Deed</h2>
+                <form onSubmit={handleAddDeed} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium">Deed</label>
+                    <input
+                      type="text"
+                      value={deed}
+                      onChange={(e) => setDeed(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 border rounded text-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium">Description</label>
+                    <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 border rounded text-black"
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </AddDeedModal>
+            </div>
+          )}
         </section>
       </main>
       <Footer />

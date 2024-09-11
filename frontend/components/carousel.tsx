@@ -88,8 +88,9 @@ const Carousel = ({ data }: { data: { image: string; text: string }[] }) => {
                                 src={item.image}
                                 alt={'Could not load the image'}
                                 layout="responsive"
-                                width={1600}  // Set a realistic width
-                                height={900}  // Set a realistic height to preserve aspect ratio
+                                width={0}  // Set a realistic width
+                                height={0}  // Set a realistic height to preserve aspect ratio
+                                style={{width: '50%', height: '50%'}}
                                 className="rounded-lg pointer-events-none"
                             />
                             <p className='text-center text-lg mt-6'>{item.text}</p>

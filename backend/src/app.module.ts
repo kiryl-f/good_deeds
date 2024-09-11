@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { GoodDeedsModule } from './deeds/deeds.module';
+import { FriendshipModule } from './friends/friendship.module';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
     GoodDeedsModule,
+    FriendshipModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'db',
