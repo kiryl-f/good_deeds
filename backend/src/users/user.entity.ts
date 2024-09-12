@@ -18,11 +18,9 @@ export class User {
     @Column()
     password: string;
 
-    // One user can have many good deeds
     @OneToMany(() => Deed, (deed) => deed.user)
     deeds: Deed[];
     
-     // Field for sent friend requests (IDs of users to whom this user sent friend requests)
   @ManyToMany(() => User)
   @JoinTable({
     name: 'friend_requests',
@@ -37,7 +35,6 @@ export class User {
   })
   sentFriendRequests: User[];
 
-  // Field for received friend requests (IDs of users who sent friend requests to this user)
   @ManyToMany(() => User)
   @JoinTable({
     name: 'received_friend_requests',
@@ -52,7 +49,6 @@ export class User {
   })
   receivedFriendRequests: User[];
 
-  // Field for accepted friends (IDs of users who are accepted as friends)
   @ManyToMany(() => User)
   @JoinTable({
     name: 'friends',

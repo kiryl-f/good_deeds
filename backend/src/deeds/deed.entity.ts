@@ -16,5 +16,5 @@ export class Deed {
   user: User;
 
   @CreateDateColumn()
-  createdAt: Date; // Ensure this field exists and is properly annotated
+  createdAt: Date;
 }

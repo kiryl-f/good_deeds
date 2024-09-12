@@ -16,15 +16,14 @@ interface User {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null); // State for the current user
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Ensure localStorage is accessed only in the browser
     if (typeof window !== 'undefined') {
       const user = localStorage.getItem('user');
       if (user) {
-        setCurrentUser(JSON.parse(user)); // Parse and store current user in state
+        setCurrentUser(JSON.parse(user)); 
       }
     }
   }, []);
@@ -51,7 +50,7 @@ export default function UsersPage() {
   const handleAddFriend = async (userId: number) => {
     const token = localStorage.getItem('token');
     if (!token || !currentUser) {
-      router.push('/login');  // Redirect to login if not logged in
+      router.push('/login'); 
       return;
     }
 

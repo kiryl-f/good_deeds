@@ -25,7 +25,7 @@ export class DeedsController {
   createDeed(
     @Body('title') title: string,
     @Body('description') description: string,
-    @Body('userId') userId: number, // Receive userId from the request body
+    @Body('userId') userId: number,
   ): Promise<Deed> {
     return this.deedsService.create(title, description, userId);
   }

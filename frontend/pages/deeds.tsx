@@ -24,7 +24,6 @@ const DeedsPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
 
-  // Check if the user is logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');

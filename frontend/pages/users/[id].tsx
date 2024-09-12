@@ -11,8 +11,8 @@ interface User {
   name: string;
   username: string;
   email: string;
-  sentFriendRequests: number[]; // Might be undefined
-  receivedFriendRequests?: number[]; // Might be undefined
+  sentFriendRequests: number[];
+  receivedFriendRequests?: number[]; 
 }
 
 interface Friend {

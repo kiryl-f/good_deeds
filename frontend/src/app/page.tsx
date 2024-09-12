@@ -111,7 +111,6 @@ export default function Home() {
       const response = await axios.get('http://localhost:3001/deeds');
       const deeds = response.data;
 
-      // Sort deeds by creation date and pick the latest 3
       const latest = deeds
         .sort((a: Deed, b: Deed) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 3);

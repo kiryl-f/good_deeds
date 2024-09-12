@@ -24,8 +24,8 @@ export class DeedsService {
   async findLatestDeeds(): Promise<Deed[]> {
     return this.deedsRepository.find({
       order: { createdAt: 'DESC' },
-      take: 3, // Limit to 6 latest deeds
-      relations: ['user'], // Include related user data
+      take: 3,
+      relations: ['user'], 
     });
   }
 
