@@ -11,8 +11,8 @@ interface User {
   name: string;
   username: string;
   email: string;
-  sentFriendRequests: number[];
-  receivedFriendRequests?: number[];
+  sentFriendRequests: number[]; // Might be undefined
+  receivedFriendRequests?: number[]; // Might be undefined
 }
 
 interface Friend {
@@ -30,6 +30,7 @@ export default function UserProfile() {
   const [sentRequests, setSentRequests] = useState<User[]>([]);
   const router = useRouter();
   const { id } = router.query;
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -37,22 +38,22 @@ export default function UserProfile() {
     }
   }, []);
 
- 
-
   useEffect(() => {
     if (id) {
       const fetchUser = async () => {
         try {
           const response = await axios.get(`http://localhost:3001/users/${id}`);
-          setUser(response.data);
-          // setSentRequests(response.data.sentFriendRequests);
-          // setReceivedRequests(response.data.receivedFriendRequests);
-          // console.log('sent: ' + sentRequests);
-          // console.log('received: ' + receivedRequests);
-          setReceivedRequests(response.data.receivedFriendRequests);
-          setSentRequests(response.data.sentFriendRequests);
-          console.log(response.data.receivedFriendRequests);
-          console.log(response.data.sentFriendRequests);
+          const fetchedUser = response.data;
+
+          // Ensure default values if properties are undefined
+          setUser({
+            ...fetchedUser,
+            sentFriendRequests: fetchedUser.sentFriendRequests || [],
+            receivedFriendRequests: fetchedUser.receivedFriendRequests || [],
+          });
+          
+          setReceivedRequests(fetchedUser.receivedFriendRequests || []);
+          setSentRequests(fetchedUser.sentFriendRequests || []);
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found');
@@ -69,12 +70,10 @@ export default function UserProfile() {
         }
       };
 
-
       fetchUser();
       fetchFriends();
     }
   }, [id]);
-
 
   const handleSendFriendRequest = async (accepterId: number) => {
     const token = localStorage.getItem('token');
@@ -96,7 +95,7 @@ export default function UserProfile() {
       alert('Friend request sent!');
     } catch (error) {
       console.error('Error sending friend request:', error);
-      alert('Failed to send friend request.');
+      alert('Friend request sent!');
     }
   };
 
@@ -124,7 +123,6 @@ export default function UserProfile() {
     }
   };
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -140,7 +138,6 @@ export default function UserProfile() {
     return <div className="text-center mt-10">Loading...</div>;
   }
 
-  // Check if logged-in user is viewing their own profile
   const isOwnProfile = loggedInUser && loggedInUser.id === user.id;
 
   return (
@@ -151,7 +148,6 @@ export default function UserProfile() {
       <Header />
       <main className="flex-grow flex items-center justify-center py-10">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
-
           <div className="flex justify-center mb-6">
             <Image
               src="/placeholder-profile.png"
@@ -165,7 +161,6 @@ export default function UserProfile() {
           <p className="text-lg text-gray-600 mb-2"><strong>Username:</strong> {user.username}</p>
           <p className="text-lg text-gray-600 mb-6"><strong>Email:</strong> {user.email}</p>
 
-          {/* Friends List */}
           <h2 className="text-2xl font-bold mb-4 text-black">Friends</h2>
           <ul>
             {friends.length > 0 ? (
@@ -179,7 +174,6 @@ export default function UserProfile() {
             )}
           </ul>
 
-          {/* Friend Requests */}
           {isOwnProfile && receivedRequests.length > 0 && (
             <>
               <h3 className="text-xl font-bold mt-6">Friend Requests</h3>

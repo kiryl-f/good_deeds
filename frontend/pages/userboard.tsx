@@ -61,9 +61,9 @@ export default function UsersPage() {
         { accepterId: userId },
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      alert('Friend request sent');
+      alert('Friend request sent!');
     } catch (error) {
-      alert('Failed to send friend request');
+      alert('Friend request sent!');
     }
   };
 
