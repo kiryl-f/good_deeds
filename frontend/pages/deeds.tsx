@@ -97,11 +97,14 @@ const DeedsPage = () => {
         {error && <p className="text-red-500 text-center">{error}</p>}
         {success && <p className="text-green-500 text-center">{success}</p>}
 
-        <div className="flex flex-column w-full h-auto justify-center">
-          {deeds.map((deed) => (
-            <DeedCard key={deed.id} deed={deed} />
-          ))}
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col w-full h-auto items-center">
+            {deeds.map((deed) => (
+              <DeedCard key={deed.id} deed={deed} />
+            ))}
+          </div>
         </div>
+
 
         {isLoggedIn && (
           <div className="mt-auto py-6 flex justify-center">

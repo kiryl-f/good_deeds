@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Header from '../../components/header';
 import Footer from '../../components/footer';
 import Image from 'next/image';
+import FriendCard from '../../components/friend_card'; 
 
 interface User {
   id: number;
@@ -12,7 +13,7 @@ interface User {
   username: string;
   email: string;
   sentFriendRequests: number[];
-  receivedFriendRequests?: number[]; 
+  receivedFriendRequests?: number[];
 }
 
 interface Friend {
@@ -45,7 +46,6 @@ export default function UserProfile() {
           const response = await axios.get(`http://localhost:3001/users/${id}`);
           const fetchedUser = response.data;
 
-          // Ensure default values if properties are undefined
           setUser({
             ...fetchedUser,
             sentFriendRequests: fetchedUser.sentFriendRequests || [],
@@ -123,6 +123,28 @@ export default function UserProfile() {
     }
   };
 
+  const handleRemoveFriend = async (friendId: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:3001/users/${loggedInUser?.id}/friends/${friendId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setFriends((prevFriends) => prevFriends.filter((friend) => friend.id !== friendId));
+      alert('Friend removed successfully!');
+    } catch (error) {
+      console.error('Error removing friend:', error);
+      alert('Failed to remove friend.');
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -165,9 +187,7 @@ export default function UserProfile() {
           <ul>
             {friends.length > 0 ? (
               friends.map((friend) => (
-                <li key={friend.id} className="text-lg text-gray-600 align-left">
-                  {friend.name} ({friend.username})
-                </li>
+                <FriendCard key={friend.id} friend={friend} onRemove={handleRemoveFriend} />
               ))
             ) : (
               <p className="text-gray-600">No friends found.</p>

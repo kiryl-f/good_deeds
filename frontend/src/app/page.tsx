@@ -134,7 +134,7 @@ export default function Home() {
       </Head>
       <Header />
       <main className="flex-grow">
-        <section className="text-white text-left py-10 px-6 md:py-20 md:px-10 lg:py-24 lg:px-16 md:ml-10 lg:ml-10 ml-10">
+        <section className="text-white text-left py-10 px-6 md:py-20 md:px-10 lg:py-24 lg:px-16 md:ml-16 lg:ml-24 ml-20">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">Welcome to Good Deeds Platform</h1>
           <p className="text-lg md:text-2xl mb-8">Join us in making the world a better place, one good deed at a time.</p>
           {!isLoggedIn && (
@@ -192,7 +192,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-12">Latest Good Deeds</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {latestDeeds.map(deed => (
-              <div key={deed.id} className="p-4 bg-gray-100 rounded-lg shadow-md">
+              <div key={deed.id} className="p-4 bg-gray-100 rounded-lg shadow-md transition-transform hover:scale-105 hover:shadow-xl">
                 <h3 className="font-bold text-base text-gray-600 mb-4">{deed.title}</h3>
                 <p className="text-gray-600">{deed.description}</p>
                 <p className="text-gray-600 mt-2">by {deed.user.name}</p>

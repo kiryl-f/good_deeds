@@ -24,11 +24,11 @@ const UserCard: React.FC<UserCardProps> = ({ user, onAddFriend }) => {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border rounded shadow-md space-x-4">
+    <div className="flex items-center justify-between p-4 border rounded shadow-md space-x-4 transition-transform hover:scale-105 hover:shadow-xl">
       <div className="flex items-center space-x-4">
         {/* Profile Picture */}
         <img
-          src="../public/placeholder-profile.png"
+          src="/placeholder-profile.png"
           alt="Profile Picture"
           width={60}
           height={60}

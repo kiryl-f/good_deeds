@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import axios from 'axios';
 import '../src/app/globals.css';
+import { useRouter } from 'next/router';
 
 export default function RegisterForm() {
   const [name, setName] = useState('');
@@ -11,6 +12,8 @@ export default function RegisterForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +28,7 @@ export default function RegisterForm() {
       if (response.status === 201) {
         setSuccess('User registered successfully!');
         setError(null);
+        router.push('../deeds');
       }
     } catch (err) {
       setError('Registration failed. Please try again.: ' + err);
