@@ -15,7 +15,7 @@ const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
   return (
     <div className="flex justify-between items-center p-4 my-4 bg-gray-100 rounded-lg mb-2 shadow-md transition-transform hover:scale-105 hover:shadow-xl">
       <div>
-        <p className="text-lg text-gray-700 font-bold">{friend.name}</p>
+        <p className="text-lg text-gray-700 font-bold mb-4">{friend.name}</p>
         <p className="text-gray-600">{friend.username}</p>
       </div>
       <button

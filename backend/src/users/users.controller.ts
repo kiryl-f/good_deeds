@@ -68,4 +68,12 @@ export class UsersController {
   async getFriends(@Param('id') userId: number): Promise<User[]> {
     return this.usersService.getFriends(userId);
   }
+
+  @Delete(':userId/friends/:friendId')
+  async removeFriend(
+    @Param('userId') userId: number,
+    @Param('friendId') friendId: number,
+  ): Promise<void> {
+    await this.usersService.removeFriend(userId, friendId);
+  }
 }

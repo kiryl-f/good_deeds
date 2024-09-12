@@ -1,55 +1,66 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import GoodDeedsModal from './good_deeds_modal'; // Assuming this is the correct path for the modal component
+
+interface GoodDeed {
+  id: number;
+  title: string;
+  description: string;
+}
 
 interface UserCardProps {
   user: {
     id: number;
     name: string;
     username: string;
-    goodDeedsCount: number;
   };
+  goodDeeds: GoodDeed[];
   onAddFriend: (userId: number) => void;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user, onAddFriend }) => {
-  const router = useRouter();
+const UserCard: React.FC<UserCardProps> = ({ user, goodDeeds, onAddFriend }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddFriendClick = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login'); // Redirect to login if not logged in
-      return;
-    }
-    onAddFriend(user.id); // Call the add friend handler
+    onAddFriend(user.id);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <div className="flex items-center justify-between p-4 border rounded shadow-md space-x-4 transition-transform hover:scale-105 hover:shadow-xl">
       <div className="flex items-center space-x-4">
-        {/* Profile Picture */}
-        <img
-          src="/placeholder-profile.png"
-          alt="Profile Picture"
-          width={60}
-          height={60}
-          className="rounded-full border-4 border-gray-300"
-        />
-
-        {/* User Info */}
         <div>
           <h3 className="text-xl font-bold">{user.name} ({user.username})</h3>
-          <p>Good Deeds: {user.goodDeedsCount}</p>
+          <p>Good Deeds: {goodDeeds.length}</p>
+          <button
+            onClick={handleOpenModal}
+            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            View Good Deeds
+          </button>
         </div>
       </div>
 
-      {/* Add Friend Button */}
-      <button
-        onClick={handleAddFriendClick}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Add as Friend
-      </button>
-    </div>
+      {!isModalOpen && (
+        <button
+          onClick={handleAddFriendClick}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Add Friend
+        </button>
+      )}
 
+      <GoodDeedsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        username={user.username}
+        goodDeeds={goodDeeds}
+      />
+    </div>
   );
 };
 

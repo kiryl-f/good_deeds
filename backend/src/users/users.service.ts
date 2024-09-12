@@ -148,4 +148,29 @@ export class UsersService {
 
     return user.friends;
   }
+
+  async removeFriend(userId: number, friendId: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['friends'],
+    });
+
+    const friend = await this.userRepository.findOne({
+      where: { id: friendId },
+      relations: ['friends'],
+    });
+
+    if (!user || !friend) {
+      throw new NotFoundException('User or friend not found');
+    }
+
+    // Remove each other from the friends list
+    user.friends = user.friends.filter(f => f.id !== friendId);
+    friend.friends = friend.friends.filter(f => f.id !== userId);
+
+    await this.userRepository.save(user);
+    await this.userRepository.save(friend);
+
+    return user;
+  }
 }

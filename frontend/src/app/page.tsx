@@ -18,14 +18,6 @@ const DATA = [
 ];
 
 
-interface Deed {
-  id: number;
-  title: string;
-  description: string;
-  user: {
-    name: string;
-  };
-}
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -10,11 +10,22 @@ interface User {
   id: number;
   name: string;
   username: string;
-  goodDeedsCount: number;
+}
+
+interface GoodDeed {
+  id: number;
+  title: string;
+  description: string;
+  user: User;
+}
+
+interface UserWithDeeds {
+  user: User;
+  goodDeeds: GoodDeed[];
 }
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [usersWithDeeds, setUsersWithDeeds] = useState<UserWithDeeds[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
@@ -23,34 +34,49 @@ export default function UsersPage() {
     if (typeof window !== 'undefined') {
       const user = localStorage.getItem('user');
       if (user) {
-        setCurrentUser(JSON.parse(user)); 
+        setCurrentUser(JSON.parse(user));
       }
     }
   }, []);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchDeeds = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/users');
-        // Filter out the current user if available
+        const response = await axios.get('http://localhost:3001/deeds');
+        const deeds: GoodDeed[] = response.data;
+
+        const userMap: Record<number, UserWithDeeds> = {};
+
+        deeds.forEach((deed) => {
+          if (!userMap[deed.user.id]) {
+            userMap[deed.user.id] = {
+              user: deed.user,
+              goodDeeds: [],
+            };
+          }
+          userMap[deed.user.id].goodDeeds.push(deed);
+        });
+
+        const usersWithDeedsArray = Object.values(userMap);
+
         const filteredUsers = currentUser
-          ? response.data.filter((user: User) => user.id !== currentUser.id)
-          : response.data;
-        setUsers(filteredUsers);
+          ? usersWithDeedsArray.filter((entry) => entry.user.id !== currentUser.id)
+          : usersWithDeedsArray;
+
+        setUsersWithDeeds(filteredUsers);
       } catch (err) {
-        setError('Failed to fetch users');
+        setError('Failed to fetch deeds');
       }
     };
 
-    if (currentUser !== null) {
-      fetchUsers();
-    }
+    fetchDeeds();
   }, [currentUser]);
 
+  // Handle adding a friend
   const handleAddFriend = async (userId: number) => {
     const token = localStorage.getItem('token');
     if (!token || !currentUser) {
-      router.push('/login'); 
+      router.push('/login');
       return;
     }
 
@@ -58,11 +84,11 @@ export default function UsersPage() {
       await axios.post(
         `http://localhost:3001/users/${currentUser.id}/friend-request`,
         { accepterId: userId },
-        { headers: { Authorization: `Bearer ${token}` } },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('Friend request sent!');
     } catch (error) {
-      alert('Friend request sent!');
+      alert('Friend request failed to send');
     }
   };
 
@@ -76,8 +102,13 @@ export default function UsersPage() {
         <h1 className="text-4xl font-bold text-center mb-6">Users</h1>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {users.map((user) => (
-            <UserCard key={user.id} user={user} onAddFriend={handleAddFriend} />
+          {usersWithDeeds.map((entry) => (
+            <UserCard
+              key={entry.user.id}
+              user={entry.user}
+              goodDeeds={entry.goodDeeds}
+              onAddFriend={handleAddFriend}
+            />
           ))}
         </div>
       </main>
