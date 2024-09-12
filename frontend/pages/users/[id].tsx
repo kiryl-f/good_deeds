@@ -11,7 +11,8 @@ interface User {
   name: string;
   username: string;
   email: string;
-  sentFriendRequests: number[]; // Friend request IDs
+  sentFriendRequests: number[];
+  receivedFriendRequests?: number[];
 }
 
 interface Friend {
@@ -22,13 +23,13 @@ interface Friend {
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null); // Logged in user's data
-  const [friends, setFriends] = useState<Friend[]>([]); // Friends list
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [friends, setFriends] = useState<Friend[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [receivedRequests, setReceivedRequests] = useState<User[]>([]);
+  const [sentRequests, setSentRequests] = useState<User[]>([]);
   const router = useRouter();
-  const { id } = router.query; // Profile being viewed
-
-  // Fetch logged-in user from localStorage
+  const { id } = router.query;
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -36,13 +37,22 @@ export default function UserProfile() {
     }
   }, []);
 
-  // Fetch the profile and friends of the user being viewed
+ 
+
   useEffect(() => {
     if (id) {
       const fetchUser = async () => {
         try {
           const response = await axios.get(`http://localhost:3001/users/${id}`);
           setUser(response.data);
+          // setSentRequests(response.data.sentFriendRequests);
+          // setReceivedRequests(response.data.receivedFriendRequests);
+          // console.log('sent: ' + sentRequests);
+          // console.log('received: ' + receivedRequests);
+          setReceivedRequests(response.data.receivedFriendRequests);
+          setSentRequests(response.data.sentFriendRequests);
+          console.log(response.data.receivedFriendRequests);
+          console.log(response.data.sentFriendRequests);
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found');
@@ -59,12 +69,13 @@ export default function UserProfile() {
         }
       };
 
+
       fetchUser();
       fetchFriends();
     }
   }, [id]);
 
-  // Send friend request
+
   const handleSendFriendRequest = async (accepterId: number) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -86,6 +97,30 @@ export default function UserProfile() {
     } catch (error) {
       console.error('Error sending friend request:', error);
       alert('Failed to send friend request.');
+    }
+  };
+
+  const handleAcceptFriendRequest = async (requesterId: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      await axios.post(
+        `http://localhost:3001/users/${loggedInUser?.id}/accept-friend-request`,
+        { requesterId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Friend request accepted!');
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+      alert('Failed to accept friend request.');
     }
   };
 
@@ -116,7 +151,7 @@ export default function UserProfile() {
       <Header />
       <main className="flex-grow flex items-center justify-center py-10">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
-          {/* Profile Photo Placeholder */}
+
           <div className="flex justify-center mb-6">
             <Image
               src="/placeholder-profile.png"
@@ -131,11 +166,11 @@ export default function UserProfile() {
           <p className="text-lg text-gray-600 mb-6"><strong>Email:</strong> {user.email}</p>
 
           {/* Friends List */}
-          <h2 className="text-2xl font-bold mb-4">Friends</h2>
+          <h2 className="text-2xl font-bold mb-4 text-black">Friends</h2>
           <ul>
             {friends.length > 0 ? (
               friends.map((friend) => (
-                <li key={friend.id} className="text-lg text-gray-600">
+                <li key={friend.id} className="text-lg text-gray-600 align-left">
                   {friend.name} ({friend.username})
                 </li>
               ))
@@ -144,7 +179,26 @@ export default function UserProfile() {
             )}
           </ul>
 
-          {/* Send Friend Request */}
+          {/* Friend Requests */}
+          {isOwnProfile && receivedRequests.length > 0 && (
+            <>
+              <h3 className="text-xl font-bold mt-6">Friend Requests</h3>
+              <ul>
+                {receivedRequests.map((requesterId) => (
+                  <li key={requesterId.id} className="flex justify-between items-center my-2">
+                    <span className="text-gray-600">Friend Request from User ID: {requesterId.id}</span>
+                    <button
+                      onClick={() => handleAcceptFriendRequest(requesterId.id)}
+                      className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
+                    >
+                      Accept
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
           {!isOwnProfile && loggedInUser && !loggedInUser.sentFriendRequests.includes(user.id) && (
             <button
               onClick={() => handleSendFriendRequest(user.id)}
@@ -154,7 +208,6 @@ export default function UserProfile() {
             </button>
           )}
 
-          {/* Display logout button if this is the logged-in user's profile */}
           {isOwnProfile && (
             <button
               onClick={handleLogout}

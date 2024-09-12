@@ -80,24 +80,34 @@ export class UsersService {
 
   // Accept a friend request
   async acceptFriendRequest(requesterId: number, accepterId: number): Promise<User> {
+    console.log('accepting request from ' + requesterId + ' ' + accepterId);
+
+    // Fetch the requester and accepter from the database
     const requester = await this.userRepository.findOne({
       where: { id: requesterId },
-      relations: ['friends'],
+      relations: ['friends', 'sentFriendRequests'],
     });
+
     const accepter = await this.userRepository.findOne({
       where: { id: accepterId },
       relations: ['friends', 'receivedFriendRequests'],
     });
 
+    // Ensure both users are found
     if (!requester || !accepter) {
       throw new NotFoundException('User not found');
     }
 
-    // Add each other to friends list
-    requester.friends.push(accepter);
-    accepter.friends.push(requester);
+    // Add each other as friends if not already added
+    if (!requester.friends.some(friend => friend.id === accepterId)) {
+      requester.friends.push(accepter);
+    }
 
-    // Remove from received/sent friend requests arrays
+    if (!accepter.friends.some(friend => friend.id === requesterId)) {
+      accepter.friends.push(requester);
+    }
+
+    // Remove friend request entries
     accepter.receivedFriendRequests = accepter.receivedFriendRequests.filter(
       user => user.id !== requesterId,
     );
@@ -105,11 +115,13 @@ export class UsersService {
       user => user.id !== accepterId,
     );
 
+    // Save the updated users
     await this.userRepository.save(requester);
     await this.userRepository.save(accepter);
 
     return accepter;
   }
+
 
   // Remove a friend request
   async removeFriendRequest(requesterId: number, accepterId: number): Promise<User> {
